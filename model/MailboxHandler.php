@@ -63,6 +63,8 @@ class MailboxHandler extends PFAHandler
             'modified' => pacol(0, 0, 1, 'ts', 'last_modified', ''),
             'password_expiry' => pacol(0, 0, 1, 'ts', 'password_expiration', ''),
             # TODO: add virtual 'notified' column and allow to display who received a vacation response?
+            #aa - per-mailbox transport setting
+            'transport' => pacol(1, 1, 1, 'text', 'transport', '', ''),
         );
 
         # update allowed quota
@@ -152,6 +154,7 @@ class MailboxHandler extends PFAHandler
             'listview' => 'list-virtual.php',
             'early_init' => 0,
             'prefill' => array('domain'),
+            'transport' => 'transport',
         );
     }
 
@@ -293,6 +296,10 @@ class MailboxHandler extends PFAHandler
             }
         }
 
+        if (isset($this->values['transport']) && trim($this->values['transport']) === '') {
+            $this->values['transport'] = null;
+        }
+
         return true;
     }
 
@@ -300,6 +307,9 @@ class MailboxHandler extends PFAHandler
     {
         if (array_key_exists('quota', $this->values)) {
             $this->values['quota'] = (int)$this->values['quota'];
+        }
+        if (array_key_exists('transport', $values)) {
+            $this->values['transport'] = trim($values['transport']) === '' ? null : $values['transport'];
         }
     }
 
